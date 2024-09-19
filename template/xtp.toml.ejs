@@ -8,10 +8,10 @@ name = "<%= project.name %>"
 
 [scripts]
 # xtp plugin build runs this script to generate the wasm file
-build = "PYTHONPATH=. extism-py -o plugin.wasm __init__.py"
+build = "PYTHONPATH=. extism-py -o plugin.wasm pdk.py"
 
 # xtp plugin init runs this script to format the code
-format = "uv run ruff format __init__.py code.py"
+format = "uv run ruff format pdk.py code.py"
 
 # xtp plugin init runs this script before running the format script
 prepare = "uv sync"
