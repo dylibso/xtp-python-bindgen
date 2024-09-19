@@ -1,0 +1,17 @@
+app_id = "<%= project.appId %>"
+
+# This is where 'xtp plugin push' expects to find the wasm file after the build script has run.
+bin = "plugin.wasm"
+extension_point_id = "<%= project.extensionPointId %>"
+# This is the 'binding' name used for the plugin.
+name = "<%= project.name %>"
+
+[scripts]
+# xtp plugin build runs this script to generate the wasm file
+build = "PYTHONPATH=. extism-py -o plugin.wasm __init__.py"
+
+# xtp plugin init runs this script to format the code
+format = "uv run ruff format __init__.py code.py"
+
+# xtp plugin init runs this script before running the format script
+prepare = "uv sync"
