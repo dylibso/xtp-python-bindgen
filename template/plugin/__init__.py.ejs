@@ -2,8 +2,8 @@
 
 import extism
 import code
-import pdk_imports as imports
-from pdk_types import *
+import pdk_imports as imports # noqa: F401
+from pdk_types import <%- Object.values(schema.schemas).map(schema => schema.name).join(", ") %> # noqa: F401 
 
 <% schema.exports.forEach(ex => { -%>
 @extism.plugin_fn

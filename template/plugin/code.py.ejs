@@ -1,0 +1,8 @@
+import extism # noqa: F401
+from pdk_types import <%- Object.values(schema.schemas).map(schema => schema.name).join(", ") %> # noqa: F401
+
+<% schema.exports.forEach(ex => { -%>
+def <%- camelToSnakeCase(ex.name) %>(*args, **kw):
+  pass
+<% }) %>
+

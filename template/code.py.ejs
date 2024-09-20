@@ -1,8 +1,0 @@
-import extism
-from pdk_types import *
-
-<% schema.exports.forEach(ex => { -%>
-def <%- camelToSnakeCase(ex.name) %>(*args, **kw):
-  pass
-<% }) %>
-
