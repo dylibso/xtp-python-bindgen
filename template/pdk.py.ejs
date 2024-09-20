@@ -2,10 +2,21 @@
 
 import extism
 import code
+import pdk_imports as imports
+from pdk_types import *
+
+from enum import Enum
+from typing import Optional
+from datetime import datetime
 
 <% schema.exports.forEach(ex => { -%>
 @extism.plugin_fn
 def <%- ex.name %>():
-  pass
+  <% if (ex.output && ex.output.contentType === "application/json") { %>
+  res = code.<%- camelToSnakeCase(ex.name) %>(<% if (ex.input) { %>  <% if (ex.input.contentType === "application/json") { %> extism.input_json(<%- toPythonType(ex.input) %>) <% } else { %> extism.input(<%- toPythonType(ex.input) %>) <% } %> <% } %>)
+  <% } else { %>
+  res = code.<%- camelToSnakeCase(ex.name) %>(<% if (ex.input) { %> <% if (ex.input.contentType === "application/json") { %> extism.input_json(<%- toPythonType(ex.input) %>) <% } else { %> extism.input(<%- toPythonType(ex.input) %>) <% } %> <% } %>)
+  <% } %>
+  extism.output(res)
 
 <% }) %>

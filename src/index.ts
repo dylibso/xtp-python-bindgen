@@ -6,7 +6,7 @@ function toPythonType(property: Property): string {
   switch (property.type) {
     case "string":
       if (property.format === "date-time") {
-        return "chrono::DateTime<chrono::Utc>";
+        return "datetime";
       }
       return "str";
     case "number":

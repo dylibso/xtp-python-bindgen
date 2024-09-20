@@ -11,7 +11,7 @@ name = "<%= project.name %>"
 build = "PYTHONPATH=. extism-py -o plugin.wasm pdk.py"
 
 # xtp plugin init runs this script to format the code
-format = "uv run ruff format pdk.py code.py"
+format = "uv run ruff format pdk.py pdk_types.py code.py"
 
 # xtp plugin init runs this script before running the format script
 prepare = "uv sync"
