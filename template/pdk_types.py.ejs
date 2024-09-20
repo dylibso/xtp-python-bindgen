@@ -3,6 +3,9 @@
 from enum import Enum
 from typing import Optional
 from datetime import datetime
+from dataclasses import dataclass
+
+import extism
 
 <% Object.values(schema.schemas).forEach(schema => { %>
     <% if (schema.enum) { %>
@@ -11,7 +14,8 @@ class <%- capitalize(schema.name) %>(Enum):
   <%- capitalize(variant) %> = "<%- variant %>"
 <% }) %>
     <% } else { %>
-class <%- capitalize(schema.name) %>:
+@dataclass
+class <%- capitalize(schema.name) %>(extism.Json):
 <% schema.properties.forEach(p => { -%>
 <% if (p.description) { -%>
   # <%- formatCommentBlock(p.description, "# ") %>
