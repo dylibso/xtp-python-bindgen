@@ -5,10 +5,6 @@ import code
 import pdk_imports as imports
 from pdk_types import *
 
-from enum import Enum
-from typing import Optional
-from datetime import datetime
-
 <% schema.exports.forEach(ex => { -%>
 @extism.plugin_fn
 def <%- ex.name %>():
