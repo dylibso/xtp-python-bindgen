@@ -10,18 +10,27 @@ function toPythonType(property: Property): string {
       }
       return "str";
     case "number":
+      // @ts-ignore
+      if (property.contentType === "application/json"){
+        return "str";
+      }
+
       if (property.format === "float" || property.format === "double") {
         return "float";
       }
+
       return "int";
     case "integer":
+      // @ts-ignore
+      if (property.contentType === "application/json"){
+        return "str";
+      }
       return "int";
     case "boolean":
       return "bool";
     case "object":
       return "dict";
     case "array":
-      // if (!property.items) 
       return "list";
     case "buffer":
       return "bytes";

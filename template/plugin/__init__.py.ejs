@@ -25,11 +25,7 @@ def <%- camelToSnakeCase(imp.name) %>(<% if (imp.input) { -%>input: <%- toPython
 <% schema.exports.forEach(ex => { -%>
 @extism.plugin_fn
 def <%- ex.name %>():
-  <% if (ex.output && ex.output.contentType === "application/json") { %>
-  res = plugin.<%- camelToSnakeCase(ex.name) %>(<% if (ex.input) { %>  <% if (ex.input.contentType === "application/json") { %> extism.input_json(<%- toPythonType(ex.input) %>) <% } else { %> extism.input(<%- toPythonType(ex.input) %>) <% } %> <% } %>)
-  <% } else { %>
-  res = plugin.<%- camelToSnakeCase(ex.name) %>(<% if (ex.input) { %> <% if (ex.input.contentType === "application/json") { %> extism.input_json(<%- toPythonType(ex.input) %>) <% } else { %> extism.input(<%- toPythonType(ex.input) %>) <% } %> <% } %>)
-  <% } %>
+  res = plugin.<%- camelToSnakeCase(ex.name) %>(<% if (ex.input) { %> extism.input(<%- toPythonType(ex.input) %>) <% } %>)
   extism.output(res)
 
 <% }) %>

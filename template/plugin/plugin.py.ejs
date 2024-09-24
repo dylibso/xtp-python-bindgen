@@ -1,8 +1,13 @@
 import extism # noqa: F401 # pyright: ignore
 from pdk_types import <%- Object.values(schema.schemas).map(schema => schema.name).join(", ") %> # noqa: F401
+from pdk_imports import <%- schema.imports.map(schema => camelToSnakeCase(schema.name)).join(", ") %> # noqa: F401
 
 <% schema.exports.forEach(ex => { -%>
-def <%- camelToSnakeCase(ex.name) %>(<% if (ex.input) { %>input: <% if (ex.input.contentType === "application/json") { %> <%- toPythonType(ex.input) %> <% } else { %> <%- toPythonType(ex.input) %> <% } %> <% } %>) <% if (ex.output) {%>-> <%- toPythonType(ex.output) %><%}%>:
-  pass
+def <%- camelToSnakeCase(ex.name) %>(<% if (ex.input) { %>input: <%- toPythonType(ex.input) %> <% } %>) <% if (ex.output) {%>-> <%- toPythonType(ex.output) %><%}%>:
+<% if (featureFlags['stub-with-code-samples'] && codeSamples(ex, 'python').length > 0) { -%>
+	<%- codeSamples(ex, 'python')[0].source %>
+<% } else { -%>
+  raise Exception("Unimplemented: <%- ex.name %>")
+<% } -%>
 <% }) %>
 
