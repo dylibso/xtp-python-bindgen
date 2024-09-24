@@ -21,7 +21,8 @@ function toPythonType(property: Property): string {
     case "object":
       return "dict";
     case "array":
-      if (!property.items) return "list";
+      // if (!property.items) 
+      return "list";
     case "buffer":
       return "bytes";
     default:

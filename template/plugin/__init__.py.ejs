@@ -2,16 +2,33 @@
 
 import extism # pyright: ignore
 import plugin
-import pdk_imports as imports # noqa: F401
 from pdk_types import <%- Object.values(schema.schemas).map(schema => schema.name).join(", ") %> # noqa: F401 
+
+# Imports
+
+<% schema.imports.forEach(imp => { %>
+<% if (hasComment(imp)) -%>
+#<%- imp.name %> <%- formatCommentBlock(imp.description, "# ") %>
+<% if (hasComment(imp.input)) { -%>
+# It takes input of <%- toPythonType(imp.input) %> (<%- formatCommentLine(imp.input.description) %>)
+<% } -%>
+<% if (hasComment(imp.output)) { -%>
+# And it returns an output <%- toPythonType(imp.output) %> (<%- formatCommentLine(imp.output.description) %>)
+<% } -%>
+@extism.import_fn("extism:host/user", "<%- imp.name %>")
+def <%- camelToSnakeCase(imp.name) %>(<% if (imp.input) { -%>input: <%- toPythonType(imp.input) %><%} -%>) <% if (imp.output) { %> -> <%- toPythonType(imp.output) %><% } %>:
+  pass
+<% }) %>
+
+# Exports
 
 <% schema.exports.forEach(ex => { -%>
 @extism.plugin_fn
 def <%- ex.name %>():
   <% if (ex.output && ex.output.contentType === "application/json") { %>
-  res = plugin.<%- camelToSnakeCase(ex.name) %>(<% if (ex.input) { %>  <% if (ex.input.contentType === "application/json") { %> extism.input(<%- toPythonType(ex.input) %>) <% } else { %> extism.input(<%- toPythonType(ex.input) %>) <% } %> <% } %>)
+  res = plugin.<%- camelToSnakeCase(ex.name) %>(<% if (ex.input) { %>  <% if (ex.input.contentType === "application/json") { %> extism.input_json(<%- toPythonType(ex.input) %>) <% } else { %> extism.input(<%- toPythonType(ex.input) %>) <% } %> <% } %>)
   <% } else { %>
-  res = plugin.<%- camelToSnakeCase(ex.name) %>(<% if (ex.input) { %> <% if (ex.input.contentType === "application/json") { %> extism.input(<%- toPythonType(ex.input) %>) <% } else { %> extism.input(<%- toPythonType(ex.input) %>) <% } %> <% } %>)
+  res = plugin.<%- camelToSnakeCase(ex.name) %>(<% if (ex.input) { %> <% if (ex.input.contentType === "application/json") { %> extism.input_json(<%- toPythonType(ex.input) %>) <% } else { %> extism.input(<%- toPythonType(ex.input) %>) <% } %> <% } %>)
   <% } %>
   extism.output(res)
 

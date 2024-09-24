@@ -12,7 +12,7 @@ from pdk_types import <%- Object.values(schema.schemas).map(schema => schema.nam
 <% if (hasComment(imp.output)) { -%>
 # And it returns an output <%- toPythonType(imp.output) %> (<%- formatCommentLine(imp.output.description) %>)
 <% } -%>
-@extism.import_fn("extism:host/env", "<%- imp.name %>")
+@extism.import_fn("extism:host/user", "<%- imp.name %>")
 def <%- camelToSnakeCase(imp.name) %>(<% if (imp.input) { -%>input: <%- toPythonType(imp.input) %><%} -%>) <% if (imp.output) { %> -> <%- toPythonType(imp.output) %><% } %>:
   pass
 <% }) %>

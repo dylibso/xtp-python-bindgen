@@ -1,14 +1,8 @@
 import extism # noqa: F401 # pyright: ignore
 from pdk_types import <%- Object.values(schema.schemas).map(schema => schema.name).join(", ") %> # noqa: F401
 
-__all__ = [
 <% schema.exports.forEach(ex => { -%>
-  "<%- camelToSnakeCase(ex.name) %>",
-<% }) %>
-]
-
-<% schema.exports.forEach(ex => { -%>
-def <%- camelToSnakeCase(ex.name) %>(*args, **kw):
+def <%- camelToSnakeCase(ex.name) %>(<% if (ex.input) { %>input: <% if (ex.input.contentType === "application/json") { %> <%- toPythonType(ex.input) %> <% } else { %> <%- toPythonType(ex.input) %> <% } %> <% } %>) <% if (ex.output) {%>-> <%- toPythonType(ex.output) %><%}%>:
   pass
 <% }) %>
 
