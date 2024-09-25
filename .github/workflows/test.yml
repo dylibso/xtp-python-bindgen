@@ -27,7 +27,7 @@ jobs:
 
       - name: Setup extism-py
         run: |
-          curl --clobber -O https://raw.githubusercontent.com/extism/python-pdk/main/install.sh
+          curl -O https://raw.githubusercontent.com/extism/python-pdk/main/install.sh
           sh install.sh
           curl -LsSf https://astral.sh/uv/install.sh | sh
 
