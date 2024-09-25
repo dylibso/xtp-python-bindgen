@@ -44,7 +44,7 @@ jobs:
         run: |
           rustup target add wasm32-wasi
           cd python-pdk && ./build.py install
-          cargo install --git https://github.com/astral-sh/uv uv
+          curl -LsSf https://astral.sh/uv/install.sh | sh
 
       - name: Install
         run: |
