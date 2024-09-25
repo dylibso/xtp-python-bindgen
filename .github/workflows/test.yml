@@ -35,8 +35,14 @@ jobs:
         with:
           node-version: '21'
 
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+
       - name: Install extism-py
         run: |
+          rustup target add wasm32-wasi
           cd python-pdk && ./build.py install
 
       - name: Install
@@ -47,12 +53,6 @@ jobs:
       - name: Build
         run: |
           npm run build
-
-      - name: Install Rust
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          target: wasm32-wasi
   
       - name: Check Rust Version
         run: rustc --version
