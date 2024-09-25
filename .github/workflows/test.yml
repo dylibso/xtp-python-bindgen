@@ -25,6 +25,12 @@ jobs:
           sh install.sh
           curl https://static.dylibso.com/cli/install.sh | sh
 
+      - name: Setup extism-py
+        run: |
+          curl --clobber -O https://raw.githubusercontent.com/extism/python-pdk/main/install.sh
+          sh install.sh
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
@@ -39,12 +45,6 @@ jobs:
         uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
-
-      - name: Install extism-py
-        run: |
-          rustup target add wasm32-wasi
-          cd python-pdk && ./build.py install
-          curl -LsSf https://astral.sh/uv/install.sh | sh
 
       - name: Install
         run: |
