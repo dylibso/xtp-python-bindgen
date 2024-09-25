@@ -31,7 +31,8 @@ function toPythonType(property: Property): string {
     case "object":
       return "dict";
     case "array":
-      return "list";
+      if (!property.items) return "list";
+      return `List[${toPythonType(property.items as Property)}]`;
     case "buffer":
       return "bytes";
     default:
