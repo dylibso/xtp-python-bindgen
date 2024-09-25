@@ -1,6 +1,7 @@
 import extism # noqa: F401 # pyright: ignore
 from pdk_types import <%- Object.values(schema.schemas).map(schema => schema.name).join(", ") %> # noqa: F401
 from pdk_imports import <%- schema.imports.map(schema => camelToSnakeCase(schema.name)).join(", ") %> # noqa: F401
+from typing import List, Optional # noqa: F401
 
 <% schema.exports.forEach(ex => { -%>
 def <%- camelToSnakeCase(ex.name) %>(<% if (ex.input) { %>input: <%- toPythonType(ex.input) %> <% } %>) <% if (ex.output) {%>-> <%- toPythonType(ex.output) %><%}%>:
