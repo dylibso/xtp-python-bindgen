@@ -15,8 +15,9 @@ jobs:
 
       - name: Checkout repository
         uses: actions/checkout@v4
-        repository: extism/python-pdk
-        path: python-pdk
+        with:
+          repository: extism/python-pdk
+          path: python-pdk
 
       - name: Setup Extism and XTP
         run: |
