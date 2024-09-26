@@ -4,6 +4,9 @@ from pdk_imports import <%- schema.imports.map(schema => camelToSnakeCase(schema
 from typing import List, Optional # noqa: F401
 
 <% schema.exports.forEach(ex => { -%>
+<% if (hasComment(ex)) { -%>
+# <%- formatCommentBlock(ex.description, "# ") %>
+<% } -%>
 def <%- camelToSnakeCase(ex.name) %>(<% if (ex.input) { %>input: <%- toPythonType(ex.input) %> <% } %>) <% if (ex.output) {%>-> <%- toPythonType(ex.output) %><%}%>:
 <% if (featureFlags['stub-with-code-samples'] && codeSamples(ex, 'python').length > 0) { -%>
 	<%- codeSamples(ex, 'python')[0].source %>
