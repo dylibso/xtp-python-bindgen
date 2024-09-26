@@ -5,6 +5,6 @@ dependencies:
 available-feature-flags:
   - name: stub-with-code-samples
     description: |
-      Stub the `__init__.py` implementations with code from the codeSamples property.
+      Stub the `plugin.py` implementations with code from the codeSamples property.
       By default the implementations will throw a not-implemented error. This will error out
       if every export doesn't have at least one Python codeSample.
