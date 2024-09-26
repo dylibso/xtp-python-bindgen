@@ -16,13 +16,17 @@ from pdk_types import <%- Object.values(schema.schemas).map(schema => schema.nam
 # And it returns an output <%- toPythonType(imp.output) %> (<%- formatCommentLine(imp.output.description) %>)
 <% } -%>
 @extism.import_fn("extism:host/user", "<%- imp.name %>")
-def <%- camelToSnakeCase(imp.name) %>(<% if (imp.input) { -%>input: <%- toPythonType(imp.input) %><%} -%>) <% if (imp.output) { %> -> <%- toPythonType(imp.output) %><% } %>:
+def <%- camelToSnakeCase(imp.name) %>(<% if (imp.input) { -%>input: <%- toPythonType(imp.input) %><%} -%>) <% if (imp.output) { %> -> <%- toPythonType(imp.output) %><% } %>: # pyright: ignore [reportReturnType]
   pass
 <% }) %>
 
 # Exports
+# The implementations for these functions is in `plugin.py`
 
 <% schema.exports.forEach(ex => { -%>
+<% if (hasComment(ex)) { -%>
+# <%- formatCommentBlock(ex.description, "# ") %>
+<% } -%>
 @extism.plugin_fn
 def <%- ex.name %>():
   res = plugin.<%- camelToSnakeCase(ex.name) %>(<% if (ex.input) { %> extism.input(<%- toPythonType(ex.input) %>) <% } %>)
