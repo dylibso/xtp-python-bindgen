@@ -22,14 +22,14 @@ jobs:
       - name: Setup Extism and XTP
         run: |
           curl -O https://raw.githubusercontent.com/extism/js-pdk/main/install.sh
-          sh install.sh
-          curl https://static.dylibso.com/cli/install.sh | sh
+          bash install.sh
+          curl https://static.dylibso.com/cli/install.sh | bash
 
       - name: Setup extism-py
         run: |
           curl -O https://raw.githubusercontent.com/extism/python-pdk/main/install.sh
-          sh install.sh
-          curl -LsSf https://astral.sh/uv/install.sh | sh
+          bash install.sh
+          curl -LsSf https://astral.sh/uv/install.sh | bash
 
       - name: Setup Python
         uses: actions/setup-python@v5
