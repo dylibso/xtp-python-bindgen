@@ -14,4 +14,4 @@ build = "PYTHONPATH=./plugin extism-py -o plugin.wasm plugin/__init__.py"
 format = "uv run ruff format plugin/*.py"
 
 # xtp plugin init runs this script before running the format script
-prepare = "uv sync"
+prepare = "bash prepare.sh && uv sync"
