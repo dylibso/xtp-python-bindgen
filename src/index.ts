@@ -55,7 +55,7 @@ function toPythonType(property: Property): string {
   }
 
   if (!tp) throw new Error("Cant convert property to Python type: " + property.type)
-  if (!property.nullable) return tp
+  if (!property.nullable && !property.required) return tp
   return `Optional[${tp}]`
 }
 
