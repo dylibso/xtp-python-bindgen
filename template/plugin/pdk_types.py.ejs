@@ -21,7 +21,20 @@ class <%- capitalize(schema.name) %>(extism.Json):
 <% if (p.description) { -%>
   # <%- formatCommentBlock(p.description, "# ") %>
 <% } -%>
+<% if (!p.nullable) {%>
   <%- p.name %>: <%- toPythonType(p) %>
+<% } %>
 <% }) %>
+
+<% schema.properties.forEach(p => { -%>
+<% if (p.description) { -%>
+  # <%- formatCommentBlock(p.description, "# ") %>
+<% } -%>
+<% if (p.nullable) {%>
+  <%- p.name %>: <%- toPythonType(p) %> = None
+<% } %>
+<% }) %>
+
 <% } %>
 <% }); %>
+
