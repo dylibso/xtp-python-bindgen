@@ -21,7 +21,7 @@ class <%- capitalize(schema.name) %>(extism.Json):
 <% if (p.description) { -%>
   # <%- formatCommentBlock(p.description, "# ") %>
 <% } -%>
-<% if (!p.nullable) {%>
+<% if (!p.nullable || p.required) {%>
   <%- p.name %>: <%- toPythonType(p) %>
 <% } %>
 <% }) %>
@@ -30,8 +30,8 @@ class <%- capitalize(schema.name) %>(extism.Json):
 <% if (p.description) { -%>
   # <%- formatCommentBlock(p.description, "# ") %>
 <% } -%>
-<% if (p.nullable) {%>
-  <%- p.name %>: <%- toPythonType(p) %> = None
+<% if (p.nullable && !p.required) {%>
+  <%- p.name %>: <%- toPythonType(p) %>
 <% } %>
 <% }) %>
 
