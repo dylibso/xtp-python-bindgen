@@ -68,12 +68,24 @@ function toPythonType(property: XtpTyped, required?: boolean): string {
   return t;
 }
 
+function toPythonParamType(property: XtpTyped): string {
+  let t = toPythonTypeX(property.xtpType);
+  if (t === 'int' || t === 'float'){
+    t = 'str';
+  }
+  if (property.xtpType.nullable) {
+    t = `Optional[${t}]`;
+  }
+  return t;
+}
+
 export function render() {
   const tmpl = Host.inputString();
   const ctx = {
     ...helpers,
     ...getContext(),
     toPythonType,
+    toPythonParamType,
     pythonTypeName,
     pythonFunctionName
   };
