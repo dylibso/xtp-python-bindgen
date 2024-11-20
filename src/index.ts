@@ -1,62 +1,71 @@
 import ejs from "ejs";
-import { getContext, helpers, Property } from "@dylibso/xtp-bindgen";
+import { 
+  helpers, 
+  getContext, 
+  ObjectType, 
+  EnumType, 
+  ArrayType, 
+  XtpNormalizedType, 
+  MapType, 
+  Parameter, 
+  Property, 
+  XtpTyped 
+} from "@dylibso/xtp-bindgen"
 
-function toPythonType(property: Property): string {
-  let tp
+function pythonTypeName(s: string): string {
+  return helpers.snakeToPascalCase(s);
+}
 
-  if (property.$ref) {
-    tp = property.$ref.name
-  } else {
-    switch (property.type) {
-      case "string":
-        if (property.format === "date-time") {
-          tp = "datetime"
-        } else {
-          tp = "str"
-        }
-        break
-      case "number":
-        // @ts-ignore
-        if (property.contentType === "application/json") {
-          tp = "str"
-        } else if (property.format === "float" || property.format === "double") {
-          tp = "float"
-        } else {
-          tp = "int"
-        }
-        break
-      case "integer":
-        // @ts-ignore
-        if (property.contentType === "application/json") {
-          tp = "str"
-        } else {
-          tp = "int"
-        }
-        break
-      case "boolean":
-        tp = "bool"
-        break
-      case "object":
-        tp = "dict"
-        break
-      case "array":
-        if (!property.items) {
-          tp = "list"
-        } else {
-          tp = `List[${toPythonType(property.items as Property)}]`
-        }
-        break
-      case "buffer":
-        tp = "bytes"
-        break
-      default:
-        throw new Error("Can't convert property to Python type: " + property.type);
-    }
+function pythonFunctionName(s: string): string {
+  return helpers.camelToSnakeCase(s);
+}
+
+
+function toPythonTypeX(type: XtpNormalizedType): string {
+  switch (type.kind) {
+    case 'string':
+      return 'str';
+    case 'int32':
+      return 'int';
+    case 'float':
+      return 'float';
+    case 'double':
+      return 'float'
+    case 'byte':
+      return 'byte';
+    case 'date-time':
+      return "datetime";
+    case 'boolean':
+      return 'bool';
+    case 'array':
+      const arrayType = type as ArrayType
+      return `List[${toPythonTypeX(arrayType.elementType)}]`
+    case 'buffer':
+      return 'bytes'; 
+    case 'map':
+      // TODO: improve typing of dicts
+      return 'dict';
+    case 'object':
+      return pythonTypeName((type as ObjectType).name);
+    case 'enum':
+      return pythonTypeName((type as EnumType).name);
+    default:
+      throw new Error("Can't convert XTP type to Python type: " + type)
   }
+}
 
-  if (!tp) throw new Error("Cant convert property to Python type: " + property.type)
-  if (!property.nullable && !property.required) return tp
-  return `Optional[${tp}]`
+
+function toPythonType(property: XtpTyped, required?: boolean): string {
+  let t = toPythonTypeX(property.xtpType);
+  if (property.xtpType.nullable) {
+    t = `Optional[${t}]`;
+  }
+  if (required === undefined || required) return t;
+
+  if (!property.xtpType.nullable) {
+    t = `Optional[${t}]`;
+  }
+  return t;
 }
 
 export function render() {
@@ -65,6 +74,8 @@ export function render() {
     ...helpers,
     ...getContext(),
     toPythonType,
+    pythonTypeName,
+    pythonFunctionName
   };
 
   const output = ejs.render(tmpl, ctx);

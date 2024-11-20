@@ -10,13 +10,13 @@ import extism # noqa: F401 # pyright: ignore
 
 <% Object.values(schema.schemas).forEach(schema => { %>
     <% if (schema.enum) { %>
-class <%- capitalize(schema.name) %>(Enum):
+class <%- pythonTypeName(schema.name) %>(Enum):
 <% schema.enum.forEach(variant => { -%>
-  <%- capitalize(variant) %> = "<%- variant %>"
+  <%- pythonTypeName(variant) %> = "<%- variant %>"
 <% }) %>
     <% } else { %>
 @dataclass
-class <%- capitalize(schema.name) %>(extism.Json):
+class <%- pythonTypeName(schema.name) %>(extism.Json):
 <% schema.properties.forEach(p => { -%>
 <% if (!p.nullable || p.required) {%>
   <% if (p.description) { -%>
