@@ -20,35 +20,41 @@ function pythonFunctionName(s: string): string {
   return helpers.camelToSnakeCase(s);
 }
 
+function isOptional(type: String): boolean {
+  return type.startsWith('Optional[')
+}
 
 function toPythonTypeX(type: XtpNormalizedType): string {
+  const opt = (t: string) => {
+    return type.nullable ? `Optional[${t}]` : t
+  }
   switch (type.kind) {
     case 'string':
-      return 'str';
+      return opt('str');
     case 'int32':
-      return 'int';
+      return opt('int');
     case 'float':
-      return 'float';
+      return opt('float');
     case 'double':
-      return 'float'
+      return opt('float')
     case 'byte':
-      return 'byte';
+      return opt('byte');
     case 'date-time':
-      return "datetime";
+      return opt("datetime");
     case 'boolean':
-      return 'bool';
+      return opt('bool');
     case 'array':
       const arrayType = type as ArrayType
-      return `List[${toPythonTypeX(arrayType.elementType)}]`
+      return opt(`List[${toPythonTypeX(arrayType.elementType)}]`);
     case 'buffer':
-      return 'bytes'; 
+      return opt('bytes'); 
     case 'map':
       // TODO: improve typing of dicts
-      return 'dict';
+      return opt('dict');
     case 'object':
-      return pythonTypeName((type as ObjectType).name);
+      return opt(pythonTypeName((type as ObjectType).name));
     case 'enum':
-      return pythonTypeName((type as EnumType).name);
+      return opt(pythonTypeName((type as EnumType).name));
     default:
       throw new Error("Can't convert XTP type to Python type: " + type)
   }
@@ -57,25 +63,14 @@ function toPythonTypeX(type: XtpNormalizedType): string {
 
 function toPythonType(property: XtpTyped, required?: boolean): string {
   let t = toPythonTypeX(property.xtpType);
-  if (property.xtpType.nullable) {
-    t = `Optional[${t}]`;
-  }
-  if (required === undefined || required) return t;
-
-  if (!property.xtpType.nullable) {
-    t = `Optional[${t}]`;
-  }
-  return t;
+  if (required === undefined || required || isOptional(t)) return t;
+  return `Optional[${t}]`;
 }
 
 function toPythonParamType(property: XtpTyped): string {
   let t = toPythonTypeX(property.xtpType);
-  if (t === 'int' || t === 'float'){
-    t = 'str';
-  }
-  if (property.xtpType.nullable) {
-    t = `Optional[${t}]`;
-  }
+  t = t.replace('int', 'str');
+  t = t.replace('float', 'str');
   return t;
 }
 
