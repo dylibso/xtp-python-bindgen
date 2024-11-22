@@ -6,9 +6,6 @@ import {
   EnumType, 
   ArrayType, 
   XtpNormalizedType, 
-  MapType, 
-  Parameter, 
-  Property, 
   XtpTyped 
 } from "@dylibso/xtp-bindgen"
 
@@ -61,14 +58,17 @@ function toPythonTypeX(type: XtpNormalizedType): string {
 }
 
 
-function toPythonType(property: XtpTyped, required?: boolean): string {
+function toPythonType(property: XtpTyped): string {
   let t = toPythonTypeX(property.xtpType);
-  if (required === undefined || required || isOptional(t)) return t;
+  if (isOptional(t)) return t;
   return `Optional[${t}]`;
 }
 
 function toPythonParamType(property: XtpTyped): string {
   let t = toPythonTypeX(property.xtpType);
+  // We need to represent bare int/float as a str in Python for now,
+  // there may be some updates to the encoder we can make to handle
+  // this case at some point
   t = t.replace('int', 'str');
   t = t.replace('float', 'str');
   return t;
