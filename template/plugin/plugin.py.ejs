@@ -1,9 +1,12 @@
+from typing import Optional, List # noqa: F401
+from datetime import datetime # noqa: F401
 import extism # noqa: F401 # pyright: ignore
+
 <% if (Object.values(schema.schemas).length > 0) { %>
-from pdk_types import <%- Object.values(schema.schemas).map(schema => schema.name).join(", ") %> # noqa: F401
+from pdk_types import <%- Object.values(schema.schemas).map(schema => pythonTypeName(schema.name)).join(", ") %> # noqa: F401
 <% } %>
 <% if (schema.imports.length > 0) { %>
-from pdk_imports import <%- schema.imports.map(schema => camelToSnakeCase(schema.name)).join(", ") %> # noqa: F401
+from pdk_imports import <%- schema.imports.map(schema => pythonFunctionName(schema.name)).join(", ") %> # noqa: F401
 <% } %>
 from typing import List, Optional # noqa: F401
 
@@ -11,7 +14,7 @@ from typing import List, Optional # noqa: F401
 <% if (hasComment(ex)) { -%>
 # <%- formatCommentBlock(ex.description, "# ") %>
 <% } -%>
-def <%- camelToSnakeCase(ex.name) %>(<% if (ex.input) { %>input: <%- toPythonType(ex.input) %> <% } %>) <% if (ex.output) {%>-> <%- toPythonType(ex.output) %><%}%>:
+def <%- pythonFunctionName(ex.name) %>(<% if (ex.input) { %>input: <%- toPythonParamType(ex.input) %> <% } %>) <% if (ex.output) {%>-> <%- toPythonParamType(ex.output) %><%}%>:
 <% if (featureFlags['stub-with-code-samples'] && codeSamples(ex, 'python').length > 0) { -%>
 	<%- codeSamples(ex, 'python')[0].source %>
 <% } else { -%>

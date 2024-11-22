@@ -63,6 +63,7 @@ jobs:
 
       - name: Run Bindgen Test
         run: |
+          sh bundle.sh
           sh bindgen-test.sh install
           sh bindgen-test.sh run
 

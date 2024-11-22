@@ -1,62 +1,77 @@
 import ejs from "ejs";
-import { getContext, helpers, Property } from "@dylibso/xtp-bindgen";
+import { 
+  helpers, 
+  getContext, 
+  ObjectType, 
+  EnumType, 
+  ArrayType, 
+  XtpNormalizedType, 
+  XtpTyped 
+} from "@dylibso/xtp-bindgen"
 
-function toPythonType(property: Property): string {
-  let tp
+function pythonTypeName(s: string): string {
+  return helpers.snakeToPascalCase(s);
+}
 
-  if (property.$ref) {
-    tp = property.$ref.name
-  } else {
-    switch (property.type) {
-      case "string":
-        if (property.format === "date-time") {
-          tp = "datetime"
-        } else {
-          tp = "str"
-        }
-        break
-      case "number":
-        // @ts-ignore
-        if (property.contentType === "application/json") {
-          tp = "str"
-        } else if (property.format === "float" || property.format === "double") {
-          tp = "float"
-        } else {
-          tp = "int"
-        }
-        break
-      case "integer":
-        // @ts-ignore
-        if (property.contentType === "application/json") {
-          tp = "str"
-        } else {
-          tp = "int"
-        }
-        break
-      case "boolean":
-        tp = "bool"
-        break
-      case "object":
-        tp = "dict"
-        break
-      case "array":
-        if (!property.items) {
-          tp = "list"
-        } else {
-          tp = `List[${toPythonType(property.items as Property)}]`
-        }
-        break
-      case "buffer":
-        tp = "bytes"
-        break
-      default:
-        throw new Error("Can't convert property to Python type: " + property.type);
-    }
+function pythonFunctionName(s: string): string {
+  return helpers.camelToSnakeCase(s);
+}
+
+function isOptional(type: String): boolean {
+  return type.startsWith('Optional[')
+}
+
+function toPythonTypeX(type: XtpNormalizedType): string {
+  const opt = (t: string) => {
+    return type.nullable ? `Optional[${t}]` : t
   }
+  switch (type.kind) {
+    case 'string':
+      return opt('str');
+    case 'int32':
+      return opt('int');
+    case 'float':
+      return opt('float');
+    case 'double':
+      return opt('float')
+    case 'byte':
+      return opt('byte');
+    case 'date-time':
+      return opt("datetime");
+    case 'boolean':
+      return opt('bool');
+    case 'array':
+      const arrayType = type as ArrayType
+      return opt(`List[${toPythonTypeX(arrayType.elementType)}]`);
+    case 'buffer':
+      return opt('bytes'); 
+    case 'map':
+      // TODO: improve typing of dicts
+      return opt('dict');
+    case 'object':
+      return opt(pythonTypeName((type as ObjectType).name));
+    case 'enum':
+      return opt(pythonTypeName((type as EnumType).name));
+    default:
+      throw new Error("Can't convert XTP type to Python type: " + type)
+  }
+}
 
-  if (!tp) throw new Error("Cant convert property to Python type: " + property.type)
-  if (!property.nullable && !property.required) return tp
-  return `Optional[${tp}]`
+
+function toPythonType(property: XtpTyped): string {
+  let t = toPythonTypeX(property.xtpType);
+  if (isOptional(t)) return t;
+  return `Optional[${t}]`;
+}
+
+function toPythonParamType(property: XtpTyped): string {
+  let t = toPythonTypeX(property.xtpType);
+  // We need to represent bare int/float as a str in Python for now,
+  // there may be some updates to the encoder we can make to handle
+  // this case at some point
+  t = t.replace('int', 'str');
+  t = t.replace('float', 'str');
+  return t;
 }
 
 export function render() {
@@ -65,6 +80,9 @@ export function render() {
     ...helpers,
     ...getContext(),
     toPythonType,
+    toPythonParamType,
+    pythonTypeName,
+    pythonFunctionName
   };
 
   const output = ejs.render(tmpl, ctx);
