@@ -30,6 +30,8 @@ function toPythonTypeX(type: XtpNormalizedType): string {
       return opt('str');
     case 'int32':
       return opt('int');
+    case 'int64':
+      return opt('int');
     case 'float':
       return opt('float');
     case 'double':
@@ -49,11 +51,15 @@ function toPythonTypeX(type: XtpNormalizedType): string {
       // TODO: improve typing of dicts
       return opt('dict');
     case 'object':
-      return opt(pythonTypeName((type as ObjectType).name));
+      const name = (type as ObjectType).name; 
+      if (!name) {
+        return opt('dict');
+      }
+      return opt(pythonTypeName(name));
     case 'enum':
       return opt(pythonTypeName((type as EnumType).name));
     default:
-      throw new Error("Can't convert XTP type to Python type: " + type)
+      throw new Error("Can't convert XTP type to Python type: " + JSON.stringify(type))
   }
 }
 
