@@ -65,9 +65,7 @@ function toPythonTypeX(type: XtpNormalizedType): string {
 
 
 function toPythonType(property: XtpTyped): string {
-  let t = toPythonTypeX(property.xtpType);
-  if (isOptional(t)) return t;
-  return `Optional[${t}]`;
+  return toPythonTypeX(property.xtpType);
 }
 
 function toPythonParamType(property: XtpTyped): string {
