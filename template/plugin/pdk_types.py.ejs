@@ -18,20 +18,20 @@ class <%- pythonTypeName(schema.name) %>(Enum):
 @dataclass
 class <%- pythonTypeName(schema.name) %>(extism.Json):
 <% schema.properties.forEach(p => { -%>
-<% if (!p.nullable || p.required) {%>
+<% if (!p.nullable && p.required) {%>
   <% if (p.description) { -%>
     # <%- formatCommentBlock(p.description, "# ") %>
   <% } -%>
-  <%- p.name %>: <%- toPythonType(p) %>
+  <%- p.name %>: <%- toPythonType(p, p.required) %>
 <% } %>
 <% }) %>
 
 <% schema.properties.forEach(p => { -%>
-<% if (p.nullable && !p.required) {%>
+<% if (p.nullable || !p.required) {%>
   <% if (p.description) { -%>
     # <%- formatCommentBlock(p.description, "# ") %>
   <% } -%>
-  <%- p.name %>: <%- toPythonType(p) %> = None
+  <%- p.name %>: <%- toPythonType(p, p.required) %> = None
 <% } %>
 <% }) %>
 

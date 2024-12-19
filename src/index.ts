@@ -21,9 +21,9 @@ function isOptional(type: String): boolean {
   return type.startsWith('Optional[')
 }
 
-function toPythonTypeX(type: XtpNormalizedType): string {
+function toPythonTypeX(type: XtpNormalizedType, required: boolean = true): string {
   const opt = (t: string) => {
-    return type.nullable ? `Optional[${t}]` : t
+    return type.nullable || required === false ? `Optional[${t}]` : t
   }
   switch (type.kind) {
     case 'string':
@@ -64,12 +64,12 @@ function toPythonTypeX(type: XtpNormalizedType): string {
 }
 
 
-function toPythonType(property: XtpTyped): string {
-  return toPythonTypeX(property.xtpType);
+function toPythonType(property: XtpTyped, required?: boolean): string {
+  return toPythonTypeX(property.xtpType, required === true ? true : false);
 }
 
-function toPythonParamType(property: XtpTyped): string {
-  let t = toPythonTypeX(property.xtpType);
+function toPythonParamType(property: XtpTyped, required?: boolean): string {
+  let t = toPythonTypeX(property.xtpType, required);
   // We need to represent bare int/float as a str in Python for now,
   // there may be some updates to the encoder we can make to handle
   // this case at some point
