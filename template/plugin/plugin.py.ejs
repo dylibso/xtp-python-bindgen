@@ -16,7 +16,9 @@ from typing import List, Optional # noqa: F401
 <% } -%>
 def <%- pythonFunctionName(ex.name) %>(<% if (ex.input) { %>input: <%- toPythonParamType(ex.input) %> <% } %>) <% if (ex.output) {%>-> <%- toPythonParamType(ex.output) %><%}%>:
 <% if (featureFlags['stub-with-code-samples'] && codeSamples(ex, 'python').length > 0) { -%>
-	<%- codeSamples(ex, 'python')[0].source %>
+<% for (const line of codeSamples(ex, 'python')[0].source.split("\n")) { -%>
+    <%- line %>
+<% } -%>
 <% } else { -%>
   raise Exception("Unimplemented: <%- ex.name %>")
 <% } -%>
