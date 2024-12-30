@@ -2,6 +2,7 @@
 
 from typing import Optional, List # noqa: F401
 from datetime import datetime # noqa: F401
+import json
 import extism # pyright: ignore
 import plugin
 
@@ -34,7 +35,7 @@ def <%- pythonFunctionName(imp.name) %>(<% if (imp.input) { -%>input: <%- toPyth
 <% } -%>
 @extism.plugin_fn
 def <%- ex.name %>():
-  res = plugin.<%- pythonFunctionName(ex.name) %>(<% if (ex.input) { %> extism.input(<%- toPythonParamType(ex.input) %>) <% } %>)
-  extism.output(res)
+  res = plugin.<%- pythonFunctionName(ex.name) %>(<% if (ex.input) { %> <%- toPythonParamType(ex.input) %>.from_json(extism.input_str()) <% } %>)
+  extism.output_str(res.to_json(encoder=json.dumps, cls=extism.JSONEncoder))
 
 <% }) %>

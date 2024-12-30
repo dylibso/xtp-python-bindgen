@@ -5,8 +5,7 @@ from enum import Enum # noqa: F401
 from typing import Optional, List # noqa: F401
 from datetime import datetime # noqa: F401
 from dataclasses import dataclass # noqa: F401
-
-import extism # noqa: F401 # pyright: ignore
+from dataclass_wizard import JSONWizard # noqa: F401
 
 <% Object.values(schema.schemas).forEach(schema => { %>
     <% if (schema.enum) { %>
@@ -16,7 +15,7 @@ class <%- pythonTypeName(schema.name) %>(Enum):
 <% }) %>
     <% } else { %>
 @dataclass
-class <%- pythonTypeName(schema.name) %>(extism.Json):
+class <%- pythonTypeName(schema.name) %>(JSONWizard):
 <% schema.properties.forEach(p => { -%>
 <% if (!p.nullable && p.required) {%>
   <% if (p.description) { -%>
