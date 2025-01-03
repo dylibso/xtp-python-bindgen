@@ -33,6 +33,6 @@ case $1 in
     echo "building '$PLUGIN_NAME'..."
     xtp plugin build --path $PLUGIN_NAME
     echo "testing '$PLUGIN_NAME'..."
-    xtp plugin test $PLUGIN_NAME/plugin.wasm --with test.wasm --mock-host mock.wasm
+    EXTISM_ENABLE_WASI_OUTPUT=1 xtp plugin test $PLUGIN_NAME/plugin.wasm --with test.wasm --mock-host mock.wasm
   ;;
 esac

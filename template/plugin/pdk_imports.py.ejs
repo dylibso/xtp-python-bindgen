@@ -3,6 +3,7 @@
 from typing import Optional, List # noqa: F401
 from datetime import datetime # noqa: F401
 import extism # noqa: F401 # pyright: ignore
+import json
 
 <% if (Object.values(schema.schemas).length > 0) { %>
 from pdk_types import <%- Object.values(schema.schemas).map(schema => pythonTypeName(schema.name)).join(", ") %> # noqa: F401
@@ -18,8 +19,39 @@ from pdk_types import <%- Object.values(schema.schemas).map(schema => pythonType
 # And it returns an output <%- toPythonParamType(imp.output) %> (<%- formatCommentLine(imp.output.description) %>)
 <% } -%>
 @extism.import_fn("extism:host/user", "<%- imp.name %>")
-def <%- pythonFunctionName(imp.name) %>(<% if (imp.input) { -%>input: <%- toPythonParamType(imp.input) %><%} -%>) <% if (imp.output) { %> -> <%- toPythonParamType(imp.output) %><% } %>: # pyright: ignore [reportReturnType]
+def _<%- pythonFunctionName(imp.name) %>(<% if (imp.input) { -%>input: <%- toPythonHostParamType(imp.input) %> <%} -%>) <% if (imp.output) { %> -> <%- toPythonHostParamType(imp.output) %> <% } %>: # pyright: ignore [reportReturnType]
   pass
+
+def <%- pythonFunctionName(imp.name) %>(<% if (imp.input) { -%>input: <%- toPythonParamType(imp.input) %><%} -%>) <% if (imp.output) { %> -> <%- toPythonParamType(imp.output) %><% } %>: # pyright: ignore [reportReturnType]
+<% if (imp.output) { %>
+  return (
+<% if (imp.output.contentType === 'application/json') { %>
+<% if (imp.output.xtpType.kind === 'object') { %>
+  <%- toPythonParamType(imp.output) %>.from_json(
+<% } else { %>
+  json.loads(
+<% } -%>
+<% } -%>
+<% } -%>
+    _<%- pythonFunctionName(imp.name) %>(
+<% if (imp.input) { -%>
+<% if (imp.input.contentType === 'application/json') { %>
+<% if (imp.input.xtpType.kind === 'object') { %>
+      input.to_json()
+<% } else { %>
+      json.dumps(input)
+<% } -%>
+<% } else { %>
+      input
+<% } -%>
+<% } -%>
+    )
+<% if (imp.output) { %>
+  )
+<% if (imp.output.contentType === 'application/json') { %>
+  )
+<% } -%>
+<% } -%>
 <% }) %>
 
 

@@ -6,7 +6,8 @@ import {
   EnumType, 
   ArrayType, 
   XtpNormalizedType, 
-  XtpTyped 
+  XtpTyped,
+  Parameter
 } from "@dylibso/xtp-bindgen"
 
 function pythonTypeName(s: string): string {
@@ -78,6 +79,14 @@ function toPythonParamType(property: XtpTyped, required?: boolean): string {
   return t;
 }
 
+function toPythonHostParamType(param: Parameter): string {
+  if (param.contentType === 'application/x-binary') {
+    return 'bytes'
+  } else {
+    return 'str'
+  }
+}
+
 export function render() {
   const tmpl = Host.inputString();
   const ctx = {
@@ -86,7 +95,8 @@ export function render() {
     toPythonType,
     toPythonParamType,
     pythonTypeName,
-    pythonFunctionName
+    pythonFunctionName,
+    toPythonHostParamType
   };
 
   const output = ejs.render(tmpl, ctx);

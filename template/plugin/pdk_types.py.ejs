@@ -5,8 +5,9 @@ from enum import Enum # noqa: F401
 from typing import Optional, List # noqa: F401
 from datetime import datetime # noqa: F401
 from dataclasses import dataclass # noqa: F401
-
-import extism # noqa: F401 # pyright: ignore
+from dataclass_wizard import JSONWizard # noqa: F401
+from dataclass_wizard.type_def import JSONObject
+from base64 import b64encode, b64decode
 
 <% Object.values(schema.schemas).forEach(schema => { %>
     <% if (schema.enum) { %>
@@ -16,7 +17,7 @@ class <%- pythonTypeName(schema.name) %>(Enum):
 <% }) %>
     <% } else { %>
 @dataclass
-class <%- pythonTypeName(schema.name) %>(extism.Json):
+class <%- pythonTypeName(schema.name) %>(JSONWizard):
 <% schema.properties.forEach(p => { -%>
 <% if (!p.nullable && p.required) {%>
   <% if (p.description) { -%>
@@ -34,6 +35,23 @@ class <%- pythonTypeName(schema.name) %>(extism.Json):
   <%- p.name %>: <%- toPythonType(p, p.required) %> = None
 <% } %>
 <% }) %>
+
+    @classmethod
+    def _pre_from_dict(cls, o: JSONObject) -> JSONObject:
+<% schema.properties.forEach(p => { -%>
+<% if (p.xtpType.kind === 'buffer') {%>
+        o['<%- p.name %>'] = b64decode(o['<%- p.name %>'])
+<% } -%>
+<% }) -%>
+        return o
+
+    def _pre_dict(self):
+<% schema.properties.forEach(p => { -%>
+<% if (p.xtpType.kind === 'buffer') {%>
+        self.<%- p.name %> = b64encode(self.<%- p.name %>).decode("utf-8")
+<% } -%>
+<% }) -%>
+        return
 
 <% } %>
 <% }); %>
