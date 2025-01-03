@@ -23,8 +23,35 @@ def _<%- pythonFunctionName(imp.name) %>(<% if (imp.input) { -%>input: str <%} -
   pass
 
 def <%- pythonFunctionName(imp.name) %>(<% if (imp.input) { -%>input: <%- toPythonParamType(imp.input) %><%} -%>) <% if (imp.output) { %> -> <%- toPythonParamType(imp.output) %><% } %>: # pyright: ignore [reportReturnType]
-  <% if (imp.output) { %>obj = <%- toPythonParamType(imp.output) %>.from_json(<% } %>_<%- pythonFunctionName(imp.name) %>(<% if (imp.input) { -%>input.to_json(encoder=json.dumps, cls=extism.JSONEncoder)<% } %>)<% if (imp.output) { %>)<% } %>
-  return <% if (imp.output) { %>obj<% } %>
+<% if (imp.output) { %>
+  return (
+<% if (imp.output.contentType === 'application/json') { %>
+<% if (imp.output.xtpType.kind === 'object') { %>
+  <%- toPythonParamType(imp.output) %>.from_json(
+<% } else { %>
+  json.loads(
+<% } -%>
+<% } -%>
+<% } -%>
+    _<%- pythonFunctionName(imp.name) %>(
+<% if (imp.input) { -%>
+<% if (imp.input.contentType === 'application/json') { %>
+<% if (imp.input.xtpType.kind === 'object') { %>
+      input.to_json(encoder=json.dumps, cls=extism.JSONEncoder)
+<% } else { %>
+      json.dumps(input)
+<% } -%>
+<% } else { %>
+      input
+<% } -%>
+<% } -%>
+    )
+<% if (imp.output) { %>
+  )
+<% if (imp.output.contentType === 'application/json') { %>
+  )
+<% } -%>
+<% } -%>
 <% }) %>
 
 

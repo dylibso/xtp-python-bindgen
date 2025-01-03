@@ -36,13 +36,28 @@ def _<%- pythonFunctionName(imp.name) %>(<% if (imp.input) { -%>input: str <%} -
 @extism.plugin_fn
 def <%- ex.name %>():
 <% if (ex.input) { %>
-  extism.log(extism.LogLevel.Error, "calling .from_json")
+<% if (ex.input.contentType === 'application/json') { %>
+<% if (ex.input.xtpType.kind === 'object') { %>
   obj = <%- toPythonParamType(ex.input) %>.from_json(extism.input_str())
-  <% } %>
-  extism.log(extism.LogLevel.Error, "calling func")
+<% } else { %>
+  obj = json.loads(extism.input_str())
+<% } %>
+<% } else { %>
+  obj = extism.input_str()
+<% } %>
+<% } %>
   res = plugin.<%- pythonFunctionName(ex.name) %>(<% if (ex.input) { %> obj <% } %>)
-  #res = plugin.<%- pythonFunctionName(ex.name) %>(<% if (ex.input) { %> <%- toPythonParamType(ex.input) %>.from_json(extism.input_str()) <% } %>)
-  extism.log(extism.LogLevel.Error, "returning")
-  extism.output_str(res.to_json(encoder=json.dumps, cls=extism.JSONEncoder))
-
+<% if (ex.output) { %>
+  extism.output_str(
+<% if (ex.output.contentType === 'application/json') { %>
+<% if (ex.output.xtpType.kind === 'object') { %>
+  res.to_json(encoder=json.dumps, cls=extism.JSONEncoder)
+<% } else { %>
+  json.dumps(res)
+<% } %>
+<% } else { %>
+  res
+<% } %>
+  )
+<% } %>
 <% }) %>
