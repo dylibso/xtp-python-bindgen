@@ -40,15 +40,3 @@ if ! command_exists extism-py; then
   sleep 2
   exit 1
 fi
-
-# fetch dataclass wizard
-if [ ! -d dataclass-wizard-0.33.0 ]; then
-  curl -O https://files.pythonhosted.org/packages/0a/2a/6ae6638cd5ca919b73d393cdb4a4e53c8c3dcacc003a79d9480ecad46798/dataclass-wizard-0.33.0.tar.gz
-  tar xf dataclass-wizard-0.33.0.tar.gz
-fi
-
-# fetch typing extensions
-if [ ! -d typing_extensions-4.12.2 ]; then
-  curl -O https://files.pythonhosted.org/packages/df/db/f35a00659bc03fec321ba8bce9420de607a1d37f8342eee1863174c69557/typing_extensions-4.12.2.tar.gz
-  tar xf typing_extensions-4.12.2.tar.gz
-fi
