@@ -19,7 +19,7 @@ from pdk_types import <%- Object.values(schema.schemas).map(schema => pythonType
 # And it returns an output <%- toPythonParamType(imp.output) %> (<%- formatCommentLine(imp.output.description) %>)
 <% } -%>
 @extism.import_fn("extism:host/user", "<%- imp.name %>")
-def _<%- pythonFunctionName(imp.name) %>(<% if (imp.input) { -%>input: str <%} -%>) <% if (imp.output) { %> -> str <% } %>: # pyright: ignore [reportReturnType]
+def _<%- pythonFunctionName(imp.name) %>(<% if (imp.input) { -%>input: <%- toPythonHostParamType(imp.input) %> <%} -%>) <% if (imp.output) { %> -> <%- toPythonHostParamType(imp.output) %> <% } %>: # pyright: ignore [reportReturnType]
   pass
 
 def <%- pythonFunctionName(imp.name) %>(<% if (imp.input) { -%>input: <%- toPythonParamType(imp.input) %><%} -%>) <% if (imp.output) { %> -> <%- toPythonParamType(imp.output) %><% } %>: # pyright: ignore [reportReturnType]

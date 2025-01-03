@@ -6,10 +6,8 @@ from typing import Optional, List # noqa: F401
 from datetime import datetime # noqa: F401
 from dataclasses import dataclass # noqa: F401
 from dataclass_wizard import JSONWizard # noqa: F401
-from dataclass_wizard import JSONPyWizard
 from dataclass_wizard.type_def import JSONObject
 from base64 import b64encode, b64decode
-import logging
 
 <% Object.values(schema.schemas).forEach(schema => { %>
     <% if (schema.enum) { %>
@@ -19,7 +17,7 @@ class <%- pythonTypeName(schema.name) %>(Enum):
 <% }) %>
     <% } else { %>
 @dataclass
-class <%- pythonTypeName(schema.name) %>(JSONWizard, debug=logging.ERROR):
+class <%- pythonTypeName(schema.name) %>(JSONWizard):
 <% schema.properties.forEach(p => { -%>
 <% if (!p.nullable && p.required) {%>
   <% if (p.description) { -%>

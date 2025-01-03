@@ -22,7 +22,7 @@ from pdk_types import <%- Object.values(schema.schemas).map(schema => pythonType
 # And it returns an output <%- toPythonParamType(imp.output) %> (<%- formatCommentLine(imp.output.description) %>)
 <% } -%>
 @extism.import_fn("extism:host/user", "<%- imp.name %>")
-def _<%- pythonFunctionName(imp.name) %>(<% if (imp.input) { -%>input: str <%} -%>) <% if (imp.output) { %> -> str <% } %>: # pyright: ignore [reportReturnType]
+def _<%- pythonFunctionName(imp.name) %>(<% if (imp.input) { -%>input: <%- toPythonHostParamType(imp.input) %> <%} -%>) <% if (imp.output) { %> -> <%- toPythonHostParamType(imp.output) %> <% } %>: # pyright: ignore [reportReturnType]
   pass
 <% }) %>
 
@@ -35,29 +35,28 @@ def _<%- pythonFunctionName(imp.name) %>(<% if (imp.input) { -%>input: str <%} -
 <% } -%>
 @extism.plugin_fn
 def <%- ex.name %>():
-<% if (ex.input) { %>
-<% if (ex.input.contentType === 'application/json') { %>
-<% if (ex.input.xtpType.kind === 'object') { %>
-  obj = <%- toPythonParamType(ex.input) %>.from_json(extism.input_str())
-<% } else { %>
-  obj = json.loads(extism.input_str())
-<% } %>
-<% } else { %>
-  obj = extism.input_str()
-<% } %>
-<% } %>
-  res = plugin.<%- pythonFunctionName(ex.name) %>(<% if (ex.input) { %> obj <% } %>)
-<% if (ex.output) { %>
-  extism.output_str(
-<% if (ex.output.contentType === 'application/json') { %>
-<% if (ex.output.xtpType.kind === 'object') { %>
+<% if (ex.input) { -%>
+  input = <% if (ex.input.contentType === 'application/x-binary') { %> extism.input_bytes() <% } else { %> extism.input_str() <% } %>
+<% if (ex.input.contentType === 'application/json') { -%>
+<% if (ex.input.xtpType.kind === 'object') { -%>
+  input = <%- toPythonParamType(ex.input) %>.from_json(input)
+<% } else { -%>
+  input = json.loads(input)
+<% } -%>
+<% } -%>
+<% } -%>
+  res = plugin.<%- pythonFunctionName(ex.name) %>(<% if (ex.input) { %> input <% } %>)
+<% if (ex.output) { -%>
+<% if (ex.output.contentType === 'application/x-binary') { %>  extism.output_bytes( <% } else { %>  extism.output_str( <% } %>
+<% if (ex.output.contentType === 'application/json') { -%>
+<% if (ex.output.xtpType.kind === 'object') { -%>
   res.to_json()
-<% } else { %>
+<% } else { -%>
   json.dumps(res)
 <% } %>
-<% } else { %>
+<% } else { -%>
   res
-<% } %>
+<% } -%>
   )
-<% } %>
-<% }) %>
+<% } -%>
+<% }) -%>
