@@ -51,7 +51,7 @@ def <%- ex.name %>():
   extism.output_str(
 <% if (ex.output.contentType === 'application/json') { %>
 <% if (ex.output.xtpType.kind === 'object') { %>
-  res.to_json(encoder=json.dumps, cls=extism.JSONEncoder)
+  res.to_json()
 <% } else { %>
   json.dumps(res)
 <% } %>

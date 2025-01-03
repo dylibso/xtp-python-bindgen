@@ -37,7 +37,7 @@ def <%- pythonFunctionName(imp.name) %>(<% if (imp.input) { -%>input: <%- toPyth
 <% if (imp.input) { -%>
 <% if (imp.input.contentType === 'application/json') { %>
 <% if (imp.input.xtpType.kind === 'object') { %>
-      input.to_json(encoder=json.dumps, cls=extism.JSONEncoder)
+      input.to_json()
 <% } else { %>
       json.dumps(input)
 <% } -%>
