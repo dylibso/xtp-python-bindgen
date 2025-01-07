@@ -19,7 +19,7 @@ class <%- pythonTypeName(schema.name) %>(Enum):
 @dataclass
 class <%- pythonTypeName(schema.name) %>(JSONWizard):
 <% schema.properties.forEach(p => { -%>
-<% if (!p.nullable && p.required) {%>
+<% if (!p.nullable && p.required !== false) {%>
   <% if (p.description) { -%>
     # <%- formatCommentBlock(p.description, "# ") %>
   <% } -%>
@@ -28,7 +28,7 @@ class <%- pythonTypeName(schema.name) %>(JSONWizard):
 <% }) %>
 
 <% schema.properties.forEach(p => { -%>
-<% if (p.nullable || !p.required) {%>
+<% if (p.nullable || p.required === false) {%>
   <% if (p.description) { -%>
     # <%- formatCommentBlock(p.description, "# ") %>
   <% } -%>

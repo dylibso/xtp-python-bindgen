@@ -66,7 +66,7 @@ function toPythonTypeX(type: XtpNormalizedType, required: boolean = true): strin
 
 
 function toPythonType(property: XtpTyped, required?: boolean): string {
-  return toPythonTypeX(property.xtpType, required === true ? true : false);
+  return toPythonTypeX(property.xtpType, required === false ? false : true);
 }
 
 function toPythonParamType(property: XtpTyped, required?: boolean): string {
