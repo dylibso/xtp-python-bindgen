@@ -5,7 +5,7 @@ from enum import Enum # noqa: F401
 from typing import Optional, List # noqa: F401
 from datetime import datetime # noqa: F401
 from dataclasses import dataclass # noqa: F401
-from dataclass_wizard import JSONWizard # noqa: F401
+from dataclass_wizard import JSONWizard, skip_if_field, IS # noqa: F401
 from dataclass_wizard.type_def import JSONObject
 from base64 import b64encode, b64decode
 
@@ -41,7 +41,7 @@ class <%- pythonTypeName(schema.name) %>(JSONWizard):
   <% if (p.description) { -%>
     # <%- formatCommentBlock(p.description, "# ") %>
   <% } -%>
-  <%- p.name %>: <%- toPythonType(p, p.required) %> = None
+  <%- p.name %>: <%- toPythonType(p, p.required) %> = skip_if_field(IS(None), default=None)
 <% } %>
 <% }) %>
 
