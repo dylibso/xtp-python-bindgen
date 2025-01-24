@@ -40,3 +40,7 @@ if ! command_exists extism-py; then
   sleep 2
   exit 1
 fi
+
+# Download extism interface file for IDE intellisense
+# Ideally we'd have extism-py generate or output this to keep it in-sync
+curl -O https://raw.githubusercontent.com/extism/python-pdk/refs/heads/main/extism.pyi
