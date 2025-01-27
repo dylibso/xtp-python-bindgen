@@ -29,16 +29,18 @@ function toPythonTypeX(type: XtpNormalizedType, required: boolean = true): strin
   switch (type.kind) {
     case 'string':
       return opt('str');
+    case 'uint8':
+    case 'int8':
+    case 'uint16':
+    case 'int16':
+    case 'uint32':
     case 'int32':
-      return opt('int');
+    case 'uint64':
     case 'int64':
       return opt('int');
     case 'float':
-      return opt('float');
     case 'double':
       return opt('float')
-    case 'byte':
-      return opt('byte');
     case 'date-time':
       return opt("datetime");
     case 'boolean':
@@ -52,11 +54,10 @@ function toPythonTypeX(type: XtpNormalizedType, required: boolean = true): strin
       // TODO: improve typing of dicts
       return opt('dict');
     case 'object':
-      const name = (type as ObjectType).name; 
-      if (!name) {
-        return opt('dict');
-      }
+      const name = (type as ObjectType).name;
       return opt(pythonTypeName(name));
+    case 'free-form-object':
+      return opt('dict');
     case 'enum':
       return opt(pythonTypeName((type as EnumType).name));
     default:
