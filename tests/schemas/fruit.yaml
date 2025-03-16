@@ -128,6 +128,7 @@ components:
           "$ref": "#/components/schemas/WriteParams"
           nullable: true
         aMapOfNullableDateTimes:
+          type: object
           additionalProperties:
             type: string
             format: date-time
